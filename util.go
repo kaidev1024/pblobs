@@ -13,6 +13,12 @@ func convertToWebp(image []byte) ([]byte, error) {
 }
 
 func resizeSquare(image []byte) ([]byte, error) {
+	// Auto-rotate based on EXIF before reading dimensions; otherwise the crop
+	// operates on raw stored pixels and ForceResize later re-rotates the content.
+	image, err := bimg.NewImage(image).AutoRotate()
+	if err != nil {
+		return nil, err
+	}
 	meta, err := bimg.NewImage(image).Metadata()
 	if err != nil {
 		return nil, err
@@ -38,6 +44,11 @@ func resizeSquare(image []byte) ([]byte, error) {
 }
 
 func cropAvatar(imageData []byte, x, y, size int) ([]byte, error) {
+	var err error
+	imageData, err = bimg.NewImage(imageData).AutoRotate()
+	if err != nil {
+		return nil, err
+	}
 	croppedImage, err := bimg.NewImage(imageData).Process(bimg.Options{
 		AreaWidth:  size,
 		AreaHeight: size,
