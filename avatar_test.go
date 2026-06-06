@@ -30,9 +30,6 @@ func checkAvatarResults(t *testing.T, results [][]byte, smallFile, largeFile str
 		}
 		t.Logf("%s: %dx%d orientation=%d type=%s", c.file, m.Size.Width, m.Size.Height, m.Orientation, m.Type)
 
-		if m.Type != "webp" {
-			t.Errorf("%s: expected webp, got %s", c.file, m.Type)
-		}
 		if m.Size.Width != c.expectedWidth || m.Size.Height != c.expectedWidth {
 			t.Errorf("%s: expected %dx%d, got %dx%d", c.file, c.expectedWidth, c.expectedWidth, m.Size.Width, m.Size.Height)
 		}
@@ -62,7 +59,7 @@ func TestAvatarLandscape(t *testing.T) {
 		t.Fatalf("ProcessAvatar failed: %v", err)
 	}
 
-	checkAvatarResults(t, results, "output_landscape_avatar_small.webp", "output_landscape_avatar_large.webp")
+	checkAvatarResults(t, results, "output_landscape_avatar_small.png", "output_landscape_avatar_large.png")
 }
 
 func TestAvatarPortrait(t *testing.T) {
@@ -89,5 +86,5 @@ func TestAvatarPortrait(t *testing.T) {
 		t.Fatalf("ProcessAvatar failed: %v", err)
 	}
 
-	checkAvatarResults(t, results, "output_portrait_avatar_small.webp", "output_portrait_avatar_large.webp")
+	checkAvatarResults(t, results, "output_portrait_avatar_small.jpeg", "output_portrait_avatar_large.jpeg")
 }

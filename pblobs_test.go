@@ -47,36 +47,8 @@ func TestResize(t *testing.T) {
 	})
 }
 
-func TestConvertToWebp(t *testing.T) {
-	img := createTestJPEG(400, 300)
-
-	t.Run("converts jpeg to webp", func(t *testing.T) {
-		result, err := convertToWebp(img)
-		if err != nil {
-			t.Fatalf("convertToWebp failed: %v", err)
-		}
-		meta, err := bimg.NewImage(result).Metadata()
-		if err != nil {
-			t.Fatalf("failed to get metadata: %v", err)
-		}
-		if meta.Type != "webp" {
-			t.Errorf("expected webp type, got %s", meta.Type)
-		}
-		if meta.Size.Width != 400 || meta.Size.Height != 300 {
-			t.Errorf("expected 400x300, got %dx%d", meta.Size.Width, meta.Size.Height)
-		}
-	})
-
-	t.Run("returns error for invalid image data", func(t *testing.T) {
-		_, err := convertToWebp([]byte("not an image"))
-		if err == nil {
-			t.Error("expected error for invalid image data")
-		}
-	})
-}
-
 func TestResizeSquare(t *testing.T) {
-	t.Run("square image is resized to 360x360 webp", func(t *testing.T) {
+	t.Run("square image is resized to 360x360", func(t *testing.T) {
 		img := createTestJPEG(600, 600)
 		result, err := resizeSquare(img)
 		if err != nil {
@@ -89,12 +61,9 @@ func TestResizeSquare(t *testing.T) {
 		if meta.Size.Width != 360 || meta.Size.Height != 360 {
 			t.Errorf("expected 360x360, got %dx%d", meta.Size.Width, meta.Size.Height)
 		}
-		if meta.Type != "webp" {
-			t.Errorf("expected webp output, got %s", meta.Type)
-		}
 	})
 
-	t.Run("landscape image is cropped and resized to 360x360 webp", func(t *testing.T) {
+	t.Run("landscape image is cropped and resized to 360x360", func(t *testing.T) {
 		img := createTestJPEG(800, 400)
 		result, err := resizeSquare(img)
 		if err != nil {
@@ -109,7 +78,7 @@ func TestResizeSquare(t *testing.T) {
 		}
 	})
 
-	t.Run("portrait image is cropped and resized to 360x360 webp", func(t *testing.T) {
+	t.Run("portrait image is cropped and resized to 360x360", func(t *testing.T) {
 		img := createTestJPEG(400, 800)
 		result, err := resizeSquare(img)
 		if err != nil {
@@ -124,6 +93,21 @@ func TestResizeSquare(t *testing.T) {
 		}
 	})
 
+	t.Run("small image is not upscaled", func(t *testing.T) {
+		img := createTestJPEG(200, 300)
+		result, err := resizeSquare(img)
+		if err != nil {
+			t.Fatalf("resizeSquare failed: %v", err)
+		}
+		meta, err := bimg.NewImage(result).Metadata()
+		if err != nil {
+			t.Fatalf("failed to get metadata: %v", err)
+		}
+		if meta.Size.Width != 200 || meta.Size.Height != 200 {
+			t.Errorf("expected 200x200, got %dx%d", meta.Size.Width, meta.Size.Height)
+		}
+	})
+
 	t.Run("returns error for invalid image data", func(t *testing.T) {
 		_, err := resizeSquare([]byte("not an image"))
 		if err == nil {
@@ -133,7 +117,7 @@ func TestResizeSquare(t *testing.T) {
 }
 
 func TestCropAvatar(t *testing.T) {
-	t.Run("crops region and converts to webp", func(t *testing.T) {
+	t.Run("crops region", func(t *testing.T) {
 		img := createTestJPEG(800, 800)
 		result, err := cropAvatar(img, 100, 100, 200)
 		if err != nil {
@@ -145,9 +129,6 @@ func TestCropAvatar(t *testing.T) {
 		}
 		if meta.Size.Width != 200 || meta.Size.Height != 200 {
 			t.Errorf("expected 200x200, got %dx%d", meta.Size.Width, meta.Size.Height)
-		}
-		if meta.Type != "webp" {
-			t.Errorf("expected webp output, got %s", meta.Type)
 		}
 	})
 

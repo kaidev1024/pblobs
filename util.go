@@ -4,12 +4,21 @@ import (
 	"github.com/h2non/bimg"
 )
 
-func resize(image []byte, width int) ([]byte, error) {
-	return bimg.NewImage(image).Resize(width, 0)
-}
+const THUMBNAIL_SIZE = 360
 
-func convertToWebp(image []byte) ([]byte, error) {
-	return bimg.NewImage(image).Convert(bimg.WEBP)
+func resize(image []byte, size int) ([]byte, error) {
+	meta, err := bimg.NewImage(image).Metadata()
+	if err != nil {
+		return nil, err
+	}
+	w, h := meta.Size.Width, meta.Size.Height
+	if w <= size && h <= size {
+		return image, nil
+	}
+	if w >= h {
+		return bimg.NewImage(image).Resize(size, 0)
+	}
+	return bimg.NewImage(image).Resize(0, size)
 }
 
 func resizeSquare(image []byte) ([]byte, error) {
@@ -24,8 +33,8 @@ func resizeSquare(image []byte) ([]byte, error) {
 		return nil, err
 	}
 	w, h := meta.Size.Width, meta.Size.Height
+	side := min(w, h)
 	if w != h {
-		side := min(w, h)
 		image, err = bimg.NewImage(image).Process(bimg.Options{
 			Width:   side,
 			Height:  side,
@@ -36,27 +45,8 @@ func resizeSquare(image []byte) ([]byte, error) {
 			return nil, err
 		}
 	}
-	image, err = bimg.NewImage(image).ForceResize(360, 360)
-	if err != nil {
-		return nil, err
+	if side <= THUMBNAIL_SIZE {
+		return image, nil
 	}
-	return convertToWebp(image)
-}
-
-func cropAvatar(imageData []byte, x, y, size int) ([]byte, error) {
-	var err error
-	imageData, err = bimg.NewImage(imageData).AutoRotate()
-	if err != nil {
-		return nil, err
-	}
-	croppedImage, err := bimg.NewImage(imageData).Process(bimg.Options{
-		AreaWidth:  size,
-		AreaHeight: size,
-		Left:       x,
-		Top:        y,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return convertToWebp(croppedImage)
+	return bimg.NewImage(image).Resize(THUMBNAIL_SIZE, THUMBNAIL_SIZE)
 }
