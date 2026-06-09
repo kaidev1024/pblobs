@@ -6,8 +6,6 @@ import (
 	"image/color"
 	"image/jpeg"
 	"testing"
-
-	"github.com/h2non/bimg"
 )
 
 func createTestJPEG(width, height int) []byte {
@@ -30,12 +28,12 @@ func TestResize(t *testing.T) {
 		if err != nil {
 			t.Fatalf("resize failed: %v", err)
 		}
-		meta, err := bimg.NewImage(result).Metadata()
+		meta, err := getImageInfo(result)
 		if err != nil {
 			t.Fatalf("failed to get metadata: %v", err)
 		}
-		if meta.Size.Width != 400 {
-			t.Errorf("expected width 400, got %d", meta.Size.Width)
+		if meta.Width != 400 {
+			t.Errorf("expected width 400, got %d", meta.Width)
 		}
 	})
 
@@ -54,12 +52,12 @@ func TestResizeSquare(t *testing.T) {
 		if err != nil {
 			t.Fatalf("resizeSquare failed: %v", err)
 		}
-		meta, err := bimg.NewImage(result).Metadata()
+		meta, err := getImageInfo(result)
 		if err != nil {
 			t.Fatalf("failed to get metadata: %v", err)
 		}
-		if meta.Size.Width != 360 || meta.Size.Height != 360 {
-			t.Errorf("expected 360x360, got %dx%d", meta.Size.Width, meta.Size.Height)
+		if meta.Width != 360 || meta.Height != 360 {
+			t.Errorf("expected 360x360, got %dx%d", meta.Width, meta.Height)
 		}
 	})
 
@@ -69,12 +67,12 @@ func TestResizeSquare(t *testing.T) {
 		if err != nil {
 			t.Fatalf("resizeSquare failed: %v", err)
 		}
-		meta, err := bimg.NewImage(result).Metadata()
+		meta, err := getImageInfo(result)
 		if err != nil {
 			t.Fatalf("failed to get metadata: %v", err)
 		}
-		if meta.Size.Width != 360 || meta.Size.Height != 360 {
-			t.Errorf("expected 360x360, got %dx%d", meta.Size.Width, meta.Size.Height)
+		if meta.Width != 360 || meta.Height != 360 {
+			t.Errorf("expected 360x360, got %dx%d", meta.Width, meta.Height)
 		}
 	})
 
@@ -84,12 +82,12 @@ func TestResizeSquare(t *testing.T) {
 		if err != nil {
 			t.Fatalf("resizeSquare failed: %v", err)
 		}
-		meta, err := bimg.NewImage(result).Metadata()
+		meta, err := getImageInfo(result)
 		if err != nil {
 			t.Fatalf("failed to get metadata: %v", err)
 		}
-		if meta.Size.Width != 360 || meta.Size.Height != 360 {
-			t.Errorf("expected 360x360, got %dx%d", meta.Size.Width, meta.Size.Height)
+		if meta.Width != 360 || meta.Height != 360 {
+			t.Errorf("expected 360x360, got %dx%d", meta.Width, meta.Height)
 		}
 	})
 
@@ -99,12 +97,12 @@ func TestResizeSquare(t *testing.T) {
 		if err != nil {
 			t.Fatalf("resizeSquare failed: %v", err)
 		}
-		meta, err := bimg.NewImage(result).Metadata()
+		meta, err := getImageInfo(result)
 		if err != nil {
 			t.Fatalf("failed to get metadata: %v", err)
 		}
-		if meta.Size.Width != 200 || meta.Size.Height != 200 {
-			t.Errorf("expected 200x200, got %dx%d", meta.Size.Width, meta.Size.Height)
+		if meta.Width != 200 || meta.Height != 200 {
+			t.Errorf("expected 200x200, got %dx%d", meta.Width, meta.Height)
 		}
 	})
 
@@ -123,12 +121,12 @@ func TestCropAvatar(t *testing.T) {
 		if err != nil {
 			t.Fatalf("cropAvatar failed: %v", err)
 		}
-		meta, err := bimg.NewImage(result).Metadata()
+		meta, err := getImageInfo(result)
 		if err != nil {
 			t.Fatalf("failed to get metadata: %v", err)
 		}
-		if meta.Size.Width != 200 || meta.Size.Height != 200 {
-			t.Errorf("expected 200x200, got %dx%d", meta.Size.Width, meta.Size.Height)
+		if meta.Width != 200 || meta.Height != 200 {
+			t.Errorf("expected 200x200, got %dx%d", meta.Width, meta.Height)
 		}
 	})
 
@@ -138,12 +136,12 @@ func TestCropAvatar(t *testing.T) {
 		if err != nil {
 			t.Fatalf("cropAvatar failed: %v", err)
 		}
-		meta, err := bimg.NewImage(result).Metadata()
+		meta, err := getImageInfo(result)
 		if err != nil {
 			t.Fatalf("failed to get metadata: %v", err)
 		}
-		if meta.Size.Width != 300 || meta.Size.Height != 300 {
-			t.Errorf("expected 300x300, got %dx%d", meta.Size.Width, meta.Size.Height)
+		if meta.Width != 300 || meta.Height != 300 {
+			t.Errorf("expected 300x300, got %dx%d", meta.Width, meta.Height)
 		}
 	})
 
@@ -166,28 +164,28 @@ func TestProcessImage(t *testing.T) {
 			t.Fatalf("expected 3 results, got %d", len(results))
 		}
 
-		smallMeta, err := bimg.NewImage(results[0]).Metadata()
+		smallMeta, err := getImageInfo(results[0])
 		if err != nil {
 			t.Fatalf("failed to get small metadata: %v", err)
 		}
-		if smallMeta.Size.Width != 360 || smallMeta.Size.Height != 360 {
-			t.Errorf("small: expected 360x360, got %dx%d", smallMeta.Size.Width, smallMeta.Size.Height)
+		if smallMeta.Width != 360 || smallMeta.Height != 360 {
+			t.Errorf("small: expected 360x360, got %dx%d", smallMeta.Width, smallMeta.Height)
 		}
 
-		medMeta, err := bimg.NewImage(results[1]).Metadata()
+		medMeta, err := getImageInfo(results[1])
 		if err != nil {
 			t.Fatalf("failed to get medium metadata: %v", err)
 		}
-		if medMeta.Size.Width != 820 {
-			t.Errorf("medium: expected width 820, got %d", medMeta.Size.Width)
+		if medMeta.Width != 820 {
+			t.Errorf("medium: expected width 820, got %d", medMeta.Width)
 		}
 
-		largeMeta, err := bimg.NewImage(results[2]).Metadata()
+		largeMeta, err := getImageInfo(results[2])
 		if err != nil {
 			t.Fatalf("failed to get large metadata: %v", err)
 		}
-		if largeMeta.Size.Width != 1280 {
-			t.Errorf("large: expected width 1280, got %d", largeMeta.Size.Width)
+		if largeMeta.Width != 1280 {
+			t.Errorf("large: expected width 1280, got %d", largeMeta.Width)
 		}
 	})
 
@@ -210,20 +208,20 @@ func TestProcessAvatar(t *testing.T) {
 			t.Fatalf("expected 2 results, got %d", len(results))
 		}
 
-		smallMeta, err := bimg.NewImage(results[0]).Metadata()
+		smallMeta, err := getImageInfo(results[0])
 		if err != nil {
 			t.Fatalf("failed to get small metadata: %v", err)
 		}
-		if smallMeta.Size.Width != 128 {
-			t.Errorf("small: expected width 128, got %d", smallMeta.Size.Width)
+		if smallMeta.Width != 128 {
+			t.Errorf("small: expected width 128, got %d", smallMeta.Width)
 		}
 
-		largeMeta, err := bimg.NewImage(results[1]).Metadata()
+		largeMeta, err := getImageInfo(results[1])
 		if err != nil {
 			t.Fatalf("failed to get large metadata: %v", err)
 		}
-		if largeMeta.Size.Width != 360 {
-			t.Errorf("large: expected width 360, got %d", largeMeta.Size.Width)
+		if largeMeta.Width != 360 {
+			t.Errorf("large: expected width 360, got %d", largeMeta.Width)
 		}
 	})
 

@@ -3,8 +3,6 @@ package pblobs
 import (
 	"os"
 	"testing"
-
-	"github.com/h2non/bimg"
 )
 
 func checkAvatarResults(t *testing.T, results [][]byte, smallFile, largeFile string) {
@@ -24,14 +22,14 @@ func checkAvatarResults(t *testing.T, results [][]byte, smallFile, largeFile str
 	}
 
 	for _, c := range cases {
-		m, err := bimg.NewImage(c.data).Metadata()
+		m, err := getImageInfo(c.data)
 		if err != nil {
 			t.Fatalf("%s: metadata failed: %v", c.file, err)
 		}
-		t.Logf("%s: %dx%d orientation=%d type=%s", c.file, m.Size.Width, m.Size.Height, m.Orientation, m.Type)
+		t.Logf("%s: %dx%d orientation=%d type=%s", c.file, m.Width, m.Height, m.Orientation, m.Type)
 
-		if m.Size.Width != c.expectedWidth || m.Size.Height != c.expectedWidth {
-			t.Errorf("%s: expected %dx%d, got %dx%d", c.file, c.expectedWidth, c.expectedWidth, m.Size.Width, m.Size.Height)
+		if m.Width != c.expectedWidth || m.Height != c.expectedWidth {
+			t.Errorf("%s: expected %dx%d, got %dx%d", c.file, c.expectedWidth, c.expectedWidth, m.Width, m.Height)
 		}
 		if m.Orientation > 1 {
 			t.Errorf("%s: unexpected orientation %d (image may be rotated)", c.file, m.Orientation)
@@ -49,17 +47,17 @@ func TestAvatarLandscape(t *testing.T) {
 		t.Fatalf("failed to read landscape.png: %v", err)
 	}
 
-	meta, _ := bimg.NewImage(data).Metadata()
-	t.Logf("landscape.png: %dx%d orientation=%d", meta.Size.Width, meta.Size.Height, meta.Orientation)
+	meta, _ := getImageInfo(data)
+	t.Logf("landscape.png: %dx%d orientation=%d", meta.Width, meta.Height, meta.Orientation)
 
-	size := meta.Size.Height
-	x := (meta.Size.Width - size) / 2
+	size := meta.Height
+	x := (meta.Width - size) / 2
 	results, err := ProcessAvatar(data, x, 0, size)
 	if err != nil {
 		t.Fatalf("ProcessAvatar failed: %v", err)
 	}
 
-	checkAvatarResults(t, results, "output_landscape_avatar_small.png", "output_landscape_avatar_large.png")
+	checkAvatarResults(t, results, "output_landscape_avatar_small.jpeg", "output_landscape_avatar_large.jpeg")
 }
 
 func TestAvatarPortrait(t *testing.T) {
@@ -69,16 +67,16 @@ func TestAvatarPortrait(t *testing.T) {
 	}
 
 	// Auto-rotate to get display dimensions for crop coordinate calculation.
-	rotated, err := bimg.NewImage(data).AutoRotate()
+	rotated, err := autoRotate(data)
 	if err != nil {
-		t.Fatalf("AutoRotate failed: %v", err)
+		t.Fatalf("autoRotate failed: %v", err)
 	}
-	meta, _ := bimg.NewImage(rotated).Metadata()
-	t.Logf("portrait.JPG display: %dx%d orientation=%d", meta.Size.Width, meta.Size.Height, meta.Orientation)
+	meta, _ := getImageInfo(rotated)
+	t.Logf("portrait.JPG display: %dx%d orientation=%d", meta.Width, meta.Height, meta.Orientation)
 
-	size := meta.Size.Width // portrait: width is the short side
+	size := meta.Width // portrait: width is the short side
 	x := 0
-	y := (meta.Size.Height - size) / 2
+	y := (meta.Height - size) / 2
 	t.Logf("crop: x=%d y=%d size=%d", x, y, size)
 
 	results, err := ProcessAvatar(data, x, y, size)

@@ -2,7 +2,6 @@ package pblobs
 
 import (
 	"testing"
-	"github.com/h2non/bimg"
 )
 
 func TestPortraitResize(t *testing.T) {
@@ -14,14 +13,14 @@ func TestPortraitResize(t *testing.T) {
 		t.Fatalf("resize failed: %v", err)
 	}
 
-	meta, err := bimg.NewImage(result).Metadata()
+	meta, err := getImageInfo(result)
 	if err != nil {
 		t.Fatalf("metadata failed: %v", err)
 	}
-	t.Logf("Input: 600x1200, Output: %dx%d", meta.Size.Width, meta.Size.Height)
+	t.Logf("Input: 600x1200, Output: %dx%d", meta.Width, meta.Height)
 
-	if meta.Size.Width > meta.Size.Height {
-		t.Errorf("portrait image got rotated: expected height > width, got %dx%d", meta.Size.Width, meta.Size.Height)
+	if meta.Width > meta.Height {
+		t.Errorf("portrait image got rotated: expected height > width, got %dx%d", meta.Width, meta.Height)
 	}
 
 	// Larger portrait image that actually needs downscaling
@@ -30,16 +29,16 @@ func TestPortraitResize(t *testing.T) {
 	if err != nil {
 		t.Fatalf("resize failed: %v", err)
 	}
-	meta2, err := bimg.NewImage(result2).Metadata()
+	meta2, err := getImageInfo(result2)
 	if err != nil {
 		t.Fatalf("metadata failed: %v", err)
 	}
-	t.Logf("Input: 1200x2400, Output: %dx%d", meta2.Size.Width, meta2.Size.Height)
+	t.Logf("Input: 1200x2400, Output: %dx%d", meta2.Width, meta2.Height)
 
-	if meta2.Size.Width > meta2.Size.Height {
-		t.Errorf("portrait image got rotated: expected height > width, got %dx%d", meta2.Size.Width, meta2.Size.Height)
+	if meta2.Width > meta2.Height {
+		t.Errorf("portrait image got rotated: expected height > width, got %dx%d", meta2.Width, meta2.Height)
 	}
-	if meta2.Size.Width != 820 {
-		t.Errorf("expected width 820, got %d", meta2.Size.Width)
+	if meta2.Width != 820 {
+		t.Errorf("expected width 820, got %d", meta2.Width)
 	}
 }

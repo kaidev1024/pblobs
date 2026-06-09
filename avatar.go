@@ -1,17 +1,15 @@
 package pblobs
 
-import "github.com/h2non/bimg"
-
 func ProcessAvatar(image []byte, x, y, size int) ([][]byte, error) {
-	croppedImage, err := cropAvatar(image, x, y, size)
+	cropped, err := cropAvatar(image, x, y, size)
 	if err != nil {
 		return nil, err
 	}
-	small, err := resize(croppedImage, 128)
+	small, err := resize(cropped, 128)
 	if err != nil {
 		return nil, err
 	}
-	medium, err := resize(croppedImage, 360)
+	medium, err := resize(cropped, 360)
 	if err != nil {
 		return nil, err
 	}
@@ -19,15 +17,13 @@ func ProcessAvatar(image []byte, x, y, size int) ([][]byte, error) {
 }
 
 func cropAvatar(imageData []byte, x, y, size int) ([]byte, error) {
-	var err error
-	imageData, err = bimg.NewImage(imageData).AutoRotate()
+	if rotated, err := autoRotate(imageData); err == nil {
+		imageData = rotated
+	}
+	img, _, err := decodeImage(imageData)
 	if err != nil {
 		return nil, err
 	}
-	return bimg.NewImage(imageData).Process(bimg.Options{
-		AreaWidth:  size,
-		AreaHeight: size,
-		Left:       x,
-		Top:        y,
-	})
+	cropped := cropRect(img, x, y, size, size)
+	return encodeJPEG(cropped)
 }
