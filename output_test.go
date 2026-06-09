@@ -27,9 +27,9 @@ func TestGenerateOutputs(t *testing.T) {
 			t.Fatalf("ProcessImage failed: %v", err)
 		}
 		logResults(t, results, []string{
-			"output_landscape_small.jpeg",
-			"output_landscape_medium.jpeg",
-			"output_landscape_large.jpeg",
+			"output_landscape_small.webp",
+			"output_landscape_medium.webp",
+			"output_landscape_large.webp",
 		})
 	})
 
@@ -45,9 +45,9 @@ func TestGenerateOutputs(t *testing.T) {
 			t.Fatalf("ProcessImage failed: %v", err)
 		}
 		logResults(t, results, []string{
-			"output_portrait_small.jpeg",
-			"output_portrait_medium.jpeg",
-			"output_portrait_large.jpeg",
+			"output_portrait_small.webp",
+			"output_portrait_medium.webp",
+			"output_portrait_large.webp",
 		})
 	})
 }

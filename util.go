@@ -8,6 +8,8 @@ import (
 	"image/jpeg"
 	_ "image/png"
 	"math"
+
+	"github.com/chai2010/webp"
 )
 
 const THUMBNAIL_SIZE = 360
@@ -23,12 +25,12 @@ func resize(imageData []byte, size int) ([]byte, error) {
 	w := img.Bounds().Dx()
 	h := img.Bounds().Dy()
 	if w <= size {
-		return imageData, nil
+		return encodeWebP(img)
 	}
 	newW := size
 	newH := int(math.Round(float64(h) * float64(size) / float64(w)))
 	dst := scaleImage(img, newW, newH)
-	return encodeJPEG(dst)
+	return encodeWebP(dst)
 }
 
 func resizeSquare(imageData []byte) ([]byte, error) {
@@ -46,9 +48,9 @@ func resizeSquare(imageData []byte) ([]byte, error) {
 		img = cropRect(img, (w-side)/2, (h-side)/2, side, side)
 	}
 	if side <= THUMBNAIL_SIZE {
-		return encodeJPEG(img)
+		return encodeWebP(img)
 	}
-	return encodeJPEG(scaleImage(img, THUMBNAIL_SIZE, THUMBNAIL_SIZE))
+	return encodeWebP(scaleImage(img, THUMBNAIL_SIZE, THUMBNAIL_SIZE))
 }
 
 // scaleImage resizes src to newW×newH using bilinear interpolation.
@@ -105,6 +107,14 @@ func cropRect(src image.Image, x, y, w, h int) image.Image {
 func encodeJPEG(img image.Image) ([]byte, error) {
 	var buf bytes.Buffer
 	if err := jpeg.Encode(&buf, img, &jpeg.Options{Quality: 85}); err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+func encodeWebP(img image.Image) ([]byte, error) {
+	var buf bytes.Buffer
+	if err := webp.Encode(&buf, img, &webp.Options{Quality: 85}); err != nil {
 		return nil, err
 	}
 	return buf.Bytes(), nil

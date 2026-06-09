@@ -57,7 +57,7 @@ func TestAvatarLandscape(t *testing.T) {
 		t.Fatalf("ProcessAvatar failed: %v", err)
 	}
 
-	checkAvatarResults(t, results, "output_landscape_avatar_small.jpeg", "output_landscape_avatar_large.jpeg")
+	checkAvatarResults(t, results, "output_landscape_avatar_small.webp", "output_landscape_avatar_large.webp")
 }
 
 func TestAvatarPortrait(t *testing.T) {
@@ -84,5 +84,5 @@ func TestAvatarPortrait(t *testing.T) {
 		t.Fatalf("ProcessAvatar failed: %v", err)
 	}
 
-	checkAvatarResults(t, results, "output_portrait_avatar_small.jpeg", "output_portrait_avatar_large.jpeg")
+	checkAvatarResults(t, results, "output_portrait_avatar_small.webp", "output_portrait_avatar_large.webp")
 }

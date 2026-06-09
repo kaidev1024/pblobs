@@ -25,5 +25,5 @@ func cropAvatar(imageData []byte, x, y, size int) ([]byte, error) {
 		return nil, err
 	}
 	cropped := cropRect(img, x, y, size, size)
-	return encodeJPEG(cropped)
+	return encodeWebP(cropped)
 }

@@ -6,6 +6,8 @@ import (
 	_ "image/gif"
 	_ "image/jpeg"
 	_ "image/png"
+
+	_ "github.com/chai2010/webp"
 )
 
 type imageInfo struct {
