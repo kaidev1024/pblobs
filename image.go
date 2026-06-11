@@ -9,9 +9,5 @@ func ProcessImage(image []byte) ([][]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	large, err := resize(image, 1280)
-	if err != nil {
-		return nil, err
-	}
-	return [][]byte{small, medium, large}, nil
+	return [][]byte{small, medium}, nil
 }
